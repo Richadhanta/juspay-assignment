@@ -1,0 +1,38 @@
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure proper layout for dashboard sections */
+.MuiDrawer-root {
+  position: fixed !important;
+}
+
+.MuiDrawer-paper {
+  position: fixed !important;
+}
+
+/* IMPORTANT: Do not add any CSS reset rules to this file. */
