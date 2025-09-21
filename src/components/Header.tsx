@@ -141,9 +141,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onNotificationClick }) => 
     )
   }}
 />
-
-
-          }
           <Stack direction="row" spacing={1}>
             <IconButton size="small" onClick={toggleTheme}>
               <SunIcon width={20} height={20} color="currentColor" />
