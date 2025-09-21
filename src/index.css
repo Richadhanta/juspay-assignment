@@ -116,7 +116,7 @@ body {
 @media (max-width: 480px) {
   /* Ensure chart containers don't overflow */
   .MuiStack-root {
-    overflow-x: hidden !important;
+    overflow-x: scroll !important;
   }
   
   /* Adjust chart margins for very small screens */

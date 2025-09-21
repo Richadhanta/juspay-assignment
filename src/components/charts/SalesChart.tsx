@@ -19,7 +19,7 @@ const ChartContainer = styled(Paper)(({ theme }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  overflow: 'hidden',
+  overflow: 'auto',
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(2),
     minHeight: 350,
@@ -96,7 +96,7 @@ const Dot = styled('span')<{ color: string; isHovered?: boolean }>(({ color, the
 const CenterLabel = styled(Box)(({ theme }) => ({
   position: 'absolute',
   top: '50%',
-  left: '50%',
+  left: '23%',
   transform: 'translate(-50%, -50%)',
   textAlign: 'center',
   pointerEvents: 'none',

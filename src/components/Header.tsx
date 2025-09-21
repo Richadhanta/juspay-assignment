@@ -108,25 +108,42 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onNotificationClick }) => 
         </Stack>
 
         <Stack direction="row" alignItems="center" spacing={2.5}>
-          <SearchField
-            placeholder="Search"
-            size="small"
-            sx={{ width: 200 }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon width={16} height={16} color="currentColor" />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-                    ⌘/
-                  </Typography>
-                </InputAdornment>
-              )
-            }}
-          />
+      
+<SearchField
+  placeholder="Search"
+  size="small"
+  sx={{
+    width: 200,
+    '@media (max-width:400px)': {
+      width: '20%', // hides entire search bar on ≤400px
+    }
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon width={16} height={16} color="currentColor" />
+      </InputAdornment>
+    ),
+    endAdornment: (
+      <InputAdornment position="end">
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.disabled',
+            '@media (max-width:400px)': {
+              display: 'none', // hides ⌘/ only on ≤400px
+            }
+          }}
+        >
+          ⌘/
+        </Typography>
+      </InputAdornment>
+    )
+  }}
+/>
+
+
+          }
           <Stack direction="row" spacing={1}>
             <IconButton size="small" onClick={toggleTheme}>
               <SunIcon width={20} height={20} color="currentColor" />
