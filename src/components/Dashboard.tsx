@@ -106,17 +106,36 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
 
         <Stack 
           spacing={3.5}
-          sx={{ flexWrap: 'wrap' }}
+          sx={{ 
+            flexWrap: 'wrap',
+            '& > *': {
+              minWidth: 0 // Prevent flex items from overflowing
+            }
+          }}
         >
           <Stack 
             direction={{ xs: 'column', lg: 'row' }}
             spacing={3.5}
-            sx={{ flexWrap: { xs: 'wrap', lg: 'nowrap' } }}
+            sx={{ 
+              flexWrap: { xs: 'wrap', lg: 'nowrap' },
+              '& > *': {
+                minWidth: 0,
+                minHeight: { xs: 300, sm: 320, md: 350 }
+              }
+            }}
           >
-            <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 60%' }, minWidth: 0 }}>
+            <Box sx={{ 
+              flex: { xs: '1 1 100%', lg: '1 1 60%' }, 
+              minWidth: 0,
+              width: '100%'
+            }}>
               <ProjectionsChart data={data.projectionsData} />
             </Box>
-            <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 40%' }, minWidth: 0 }}>
+            <Box sx={{ 
+              flex: { xs: '1 1 100%', lg: '1 1 40%' }, 
+              minWidth: 0,
+              width: '100%'
+            }}>
               <WorldMap data={data.locationRevenue} />
             </Box>
           </Stack>
@@ -124,16 +143,30 @@ const Dashboard: React.FC<DashboardProps> = ({ data }) => {
           <Stack 
             direction={{ xs: 'column', lg: 'row' }}
             spacing={3.5}
-            sx={{ flexWrap: { xs: 'wrap', lg: 'nowrap' } }}
+            sx={{ 
+              flexWrap: { xs: 'wrap', lg: 'nowrap' },
+              '& > *': {
+                minWidth: 0,
+                minHeight: { xs: 300, sm: 320, md: 350 }
+              }
+            }}
           >
-            <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 60%' }, minWidth: 0 }}>
+            <Box sx={{ 
+              flex: { xs: '1 1 100%', lg: '1 1 60%' }, 
+              minWidth: 0,
+              width: '100%'
+            }}>
               <RevenueChart
                 data={data.revenueData.chartData}
                 currentWeek={data.revenueData.currentWeek}
                 previousWeek={data.revenueData.previousWeek}
               />
             </Box>
-            <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 40%' }, minWidth: 0 }}>
+            <Box sx={{ 
+              flex: { xs: '1 1 100%', lg: '1 1 40%' }, 
+              minWidth: 0,
+              width: '100%'
+            }}>
               <SalesChart data={data.salesBreakdown} />
             </Box>
           </Stack>

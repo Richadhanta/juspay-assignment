@@ -124,4 +124,8 @@ const createAppTheme = (mode: 'light' | 'dark') => {
   });
 };
 
-export default createAppTheme;
+// Create default light theme instance
+const theme = createAppTheme('light');
+
+export default theme;
+export { createAppTheme };

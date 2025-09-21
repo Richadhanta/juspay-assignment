@@ -93,4 +93,72 @@ body {
   }
 }
 
+/* Chart responsiveness improvements */
+@media (max-width: 768px) {
+  /* Ensure charts are touch-friendly */
+  .MuiChartsAxis-root,
+  .MuiChartsGrid-root,
+  .MuiChartsPieArc-root,
+  .MuiChartsLine-root,
+  .MuiChartsBar-root {
+    touch-action: pan-x pan-y !important;
+    user-select: none !important;
+  }
+  
+  /* Better legend positioning on mobile */
+  .MuiChartsLegend-root {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+}
+
+/* Very small screens (phones in portrait) */
+@media (max-width: 480px) {
+  /* Ensure chart containers don't overflow */
+  .MuiStack-root {
+    overflow-x: hidden !important;
+  }
+  
+  /* Adjust chart margins for very small screens */
+  .MuiChartsAxis-root .MuiChartsAxis-tickLabel {
+    font-size: 10px !important;
+  }
+}
+
+/* Horizontal scrolling for small charts and tables */
+@media (max-width: 768px) {
+  .chart-scroll-container,
+  .table-scroll-container {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .chart-scroll-container::-webkit-scrollbar,
+  .table-scroll-container::-webkit-scrollbar {
+    height: 6px !important;
+  }
+  
+  .chart-scroll-container::-webkit-scrollbar-track,
+  .table-scroll-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-radius: 3px !important;
+  }
+  
+  .chart-scroll-container::-webkit-scrollbar-thumb,
+  .table-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 3px !important;
+  }
+  
+  /* Table specific improvements */
+  .MuiTableContainer-root {
+    overflow-x: auto !important;
+  }
+  
+  .MuiTable-root {
+    min-width: 600px !important;
+  }
+}
+
 /* IMPORTANT: Do not add any CSS reset rules to this file. */
