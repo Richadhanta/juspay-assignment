@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import {
-  Drawer,
   Stack,
   Typography,
-  IconButton,
-  Divider,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Collapse
+  Collapse,
+  Box
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import PieChartOutlinedIcon from '@mui/icons-material/PieChartOutlined';
@@ -23,27 +21,7 @@ import CreateOutlinedIcon from '@mui/icons-material/CreateOutlined';
 import ChatBubbleOutlinedIcon from '@mui/icons-material/ChatBubbleOutlined';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
-
-const DRAWER_WIDTH = 212;
-
-const StyledDrawer = styled(Drawer)(({ theme }) => ({
-  width: DRAWER_WIDTH,
-  flexShrink: 0,
-  '& .MuiDrawer-paper': {
-    width: DRAWER_WIDTH,
-    boxSizing: 'border-box',
-    borderRight: `1px solid ${theme.palette.divider}`,
-    backgroundColor: theme.palette.background.default,
-    position: 'relative',
-    height: '100vh',
-    zIndex: 1200,
-    [theme.breakpoints.down('lg')]: {
-      position: 'fixed',
-      left: '-100%',
-      transition: 'left 0.3s ease-in-out'
-    }
-  }
-}));
+import { useNavigate } from 'react-router-dom';
 
 const BrandContainer = styled(Stack)(({ theme }) => ({
   padding: theme.spacing(3, 2.5),
@@ -91,9 +69,14 @@ const StyledListItemButton = styled(ListItemButton, {
   }
 }));
 
-const Sidebar: React.FC = () => {
+interface MobileSidebarProps {
+  onClose?: () => void;
+}
+
+const MobileSidebar: React.FC<MobileSidebarProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('Favorites');
   const [expandedSections, setExpandedSections] = useState<string[]>(['Dashboards']);
+  const navigate = useNavigate();
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => 
@@ -103,28 +86,33 @@ const Sidebar: React.FC = () => {
     );
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    if (onClose) onClose();
+  };
+
   const navigationItems = [
-    { icon: PieChartOutlinedIcon, label: 'Overview', hasChildren: false },
-    { icon: FolderOpenOutlinedIcon, label: 'Projects', hasChildren: false }
+    { icon: PieChartOutlinedIcon, label: 'Overview', hasChildren: false, path: '/' },
+    { icon: FolderOpenOutlinedIcon, label: 'Projects', hasChildren: false, path: '/' }
   ];
 
   const dashboardItems = [
-    { icon: PieChartOutlinedIcon, label: 'Default', active: true },
-    { icon: ShoppingBagOutlinedIcon, label: 'eCommerce', hasChildren: false },
-    { icon: FolderOpenOutlinedIcon, label: 'Projects', hasChildren: false },
-    { icon: AutoStoriesOutlinedIcon, label: 'Online Courses', hasChildren: false }
+    { icon: PieChartOutlinedIcon, label: 'Default', active: true, path: '/' },
+    { icon: ShoppingBagOutlinedIcon, label: 'eCommerce', hasChildren: false, path: '/' },
+    { icon: FolderOpenOutlinedIcon, label: 'Projects', hasChildren: false, path: '/' },
+    { icon: AutoStoriesOutlinedIcon, label: 'Online Courses', hasChildren: false, path: '/' }
   ];
 
   const pageItems = [
-    { icon: BadgeOutlinedIcon, label: 'User Profile', hasChildren: true, children: ['Overview', 'Projects', 'Campaigns', 'Documents', 'Followers'] },
-    { icon: BadgeOutlinedIcon, label: 'Account', hasChildren: false },
-    { icon: Groups2OutlinedIcon, label: 'Corporate', hasChildren: false },
-    { icon: CreateOutlinedIcon, label: 'Blog', hasChildren: false },
-    { icon: ChatBubbleOutlinedIcon, label: 'Social', hasChildren: false }
+    { icon: BadgeOutlinedIcon, label: 'User Profile', hasChildren: true, children: ['Overview', 'Projects', 'Campaigns', 'Documents', 'Followers'], path: '/' },
+    { icon: BadgeOutlinedIcon, label: 'Account', hasChildren: false, path: '/' },
+    { icon: Groups2OutlinedIcon, label: 'Corporate', hasChildren: false, path: '/' },
+    { icon: CreateOutlinedIcon, label: 'Blog', hasChildren: false, path: '/' },
+    { icon: ChatBubbleOutlinedIcon, label: 'Social', hasChildren: false, path: '/' }
   ];
 
   return (
-    <StyledDrawer variant="permanent" anchor="left">
+    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <BrandContainer direction="row">
         <BrandLogo 
           src="/images/brand-logo.png" 
@@ -153,7 +141,7 @@ const Sidebar: React.FC = () => {
       <List sx={{ px: 1 }}>
         {navigationItems.map((item) => (
           <ListItem key={item.label} disablePadding>
-            <StyledListItemButton>
+            <StyledListItemButton onClick={() => handleNavigation(item.path)}>
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <item.icon sx={{ fontSize: 20, color: 'text.secondary' }} />
               </ListItemIcon>
@@ -170,7 +158,7 @@ const Sidebar: React.FC = () => {
       <List sx={{ px: 1 }}>
         {dashboardItems.map((item) => (
           <ListItem key={item.label} disablePadding>
-            <StyledListItemButton active={item.active}>
+            <StyledListItemButton active={item.active} onClick={() => handleNavigation(item.path)}>
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <item.icon sx={{ fontSize: 20, color: item.active ? 'text.primary' : 'text.secondary' }} />
               </ListItemIcon>
@@ -195,7 +183,13 @@ const Sidebar: React.FC = () => {
         {pageItems.map((item) => (
           <React.Fragment key={item.label}>
             <ListItem disablePadding>
-              <StyledListItemButton onClick={() => item.hasChildren && toggleSection(item.label)}>
+              <StyledListItemButton onClick={() => {
+                if (item.hasChildren) {
+                  toggleSection(item.label);
+                } else {
+                  handleNavigation(item.path);
+                }
+              }}>
                 <ListItemIcon sx={{ minWidth: 36 }}>
                   <item.icon sx={{ fontSize: 20, color: 'text.secondary' }} />
                 </ListItemIcon>
@@ -215,7 +209,7 @@ const Sidebar: React.FC = () => {
                 <List sx={{ pl: 4 }}>
                   {item.children?.map((child) => (
                     <ListItem key={child} disablePadding>
-                      <StyledListItemButton>
+                      <StyledListItemButton onClick={() => handleNavigation(item.path)}>
                         <ListItemText 
                           primary={child} 
                           primaryTypographyProps={{ fontSize: 14, fontWeight: 400 }}
@@ -229,8 +223,24 @@ const Sidebar: React.FC = () => {
           </React.Fragment>
         ))}
       </List>
-    </StyledDrawer>
+
+      {/* Add Order List navigation */}
+      <SectionTitle>Orders</SectionTitle>
+      <List sx={{ px: 1 }}>
+        <ListItem disablePadding>
+          <StyledListItemButton onClick={() => handleNavigation('/order_list')}>
+            <ListItemIcon sx={{ minWidth: 36 }}>
+              <ShoppingBagOutlinedIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
+            </ListItemIcon>
+            <ListItemText 
+              primary="Order List" 
+              primaryTypographyProps={{ fontSize: 14, fontWeight: 400 }}
+            />
+          </StyledListItemButton>
+        </ListItem>
+      </List>
+    </Box>
   );
 };
 
-export default Sidebar;
+export default MobileSidebar;

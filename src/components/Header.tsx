@@ -20,6 +20,11 @@ import BellIcon from './icons/BellIcon';
 import { useAppTheme } from '../contexts/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 
+interface HeaderProps {
+  onMenuClick?: () => void;
+  onNotificationClick?: () => void;
+}
+
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   borderBottom: `1px solid ${theme.palette.divider}`,
@@ -66,7 +71,7 @@ const BreadcrumbText = styled(Typography, {
   color: active ? theme.palette.text.primary : theme.palette.text.secondary
 }));
 
-const Header: React.FC = () => {
+const Header: React.FC<HeaderProps> = ({ onMenuClick, onNotificationClick }) => {
   useEffect(() => {
     document.title = 'JusPay assignment';
   }, []);
@@ -78,7 +83,7 @@ const Header: React.FC = () => {
       <StyledToolbar>
         <Stack direction="row" alignItems="center" spacing={3}>
           <Stack direction="row" alignItems="center" spacing={1}>
-            <IconButton size="small">
+            <IconButton size="small" onClick={onMenuClick}>
               <SidebarIcon width={20} height={20} color="currentColor" />
             </IconButton>
             <IconButton size="small">
@@ -129,10 +134,10 @@ const Header: React.FC = () => {
             <IconButton size="small">
               <ClockIcon width={20} height={20} color="currentColor" />
             </IconButton>
-            <IconButton size="small">
+            <IconButton size="small" onClick={onNotificationClick}>
               <BellIcon width={20} height={20} color="currentColor" />
             </IconButton>
-            <IconButton size="small">
+            <IconButton size="small" onClick={onNotificationClick}>
               <SidebarIcon width={20} height={20} color="currentColor" />
             </IconButton>
           </Stack>

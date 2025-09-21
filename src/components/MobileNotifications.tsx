@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Drawer,
   Typography,
   Stack,
   List,
@@ -8,7 +7,7 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
-  Divider
+  Box
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import BugReportOutlinedIcon from '@mui/icons-material/BugReportOutlined';
@@ -16,29 +15,8 @@ import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 import type { NotificationData, ActivityData, ContactData } from '../types/dashboard';
 import { formatTimeAgo } from '../utils/formatters';
 
-const DRAWER_WIDTH = 280;
-
-const StyledDrawer = styled(Drawer)(({ theme }) => ({
-  width: DRAWER_WIDTH,
-  flexShrink: 0,
-  '& .MuiDrawer-paper': {
-    width: DRAWER_WIDTH,
-    boxSizing: 'border-box',
-    borderLeft: `1px solid ${theme.palette.divider}`,
-    backgroundColor: theme.palette.background.default,
-    position: 'relative',
-    height: '100vh',
-    zIndex: 1200,
-    [theme.breakpoints.down('xl')]: {
-      position: 'fixed',
-      right: '-100%',
-      transition: 'right 0.3s ease-in-out'
-    }
-  }
-}));
-
 const SectionContainer = styled(Stack)(({ theme }) => ({
-  padding: theme.spacing(3, 3, 2, 3),
+  padding: theme.spacing(2, 3),
   gap: theme.spacing(3)
 }));
 
@@ -68,13 +46,17 @@ const ActivityStrip = styled('div')({
   top: 60
 });
 
-interface RightSidebarProps {
+interface MobileNotificationsProps {
   notifications: NotificationData[];
   activities: ActivityData[];
   contacts: ContactData[];
 }
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ notifications, activities, contacts }) => {
+const MobileNotifications: React.FC<MobileNotificationsProps> = ({ 
+  notifications, 
+  activities, 
+  contacts 
+}) => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'bug':
@@ -87,7 +69,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ notifications, activities, 
   };
 
   return (
-    <StyledDrawer variant="permanent" anchor="right">
+    <Box sx={{ width: '100%', height: '100%', overflow: 'auto' }}>
       <SectionContainer>
         <Stack spacing={2}>
           <SectionTitle>Notifications</SectionTitle>
@@ -173,8 +155,8 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ notifications, activities, 
           </List>
         </Stack>
       </SectionContainer>
-    </StyledDrawer>
+    </Box>
   );
 };
 
-export default RightSidebar;
+export default MobileNotifications;

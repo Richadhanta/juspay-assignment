@@ -1,7 +1,6 @@
 import React from 'react';
 import { Paper, Typography, Stack, Divider, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import type { LocationRevenueData } from '../types/dashboard';
 import { formatNumber } from '../utils/formatters';
 
@@ -13,14 +12,24 @@ const MapContainer = styled(Paper)(({ theme }) => ({
   boxShadow: 'none'
 }));
 
-const MapWrapper = styled(Box)({
+const MapWrapper = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 200,
   marginBottom: 16,
-  '& svg': {
-    width: '100%',
-    height: '100%'
-  }
+  backgroundColor: theme.palette.grey[50],
+  borderRadius: theme.spacing(1),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  position: 'relative',
+  overflow: 'hidden'
+}));
+
+const MapImage = styled('img')({
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  opacity: 0.8
 });
 
 const LocationItem = styled(Stack)(({ theme }) => ({
@@ -40,6 +49,18 @@ const LocationDivider = styled(Divider)(({ theme }) => ({
   borderRadius: 1
 }));
 
+const MapDot = styled(Box)<{ top: string; left: string }>(({ theme, top, left }) => ({
+  position: 'absolute',
+  top,
+  left,
+  width: 12,
+  height: 12,
+  backgroundColor: theme.palette.primary.main,
+  borderRadius: '50%',
+  border: `2px solid ${theme.palette.background.paper}`,
+  zIndex: 2
+}));
+
 interface WorldMapProps {
   data: LocationRevenueData[];
 }
@@ -48,12 +69,12 @@ const WorldMap: React.FC<WorldMapProps> = ({ data }) => {
   // Calculate max value for proportional bar widths
   const maxValue = Math.max(...data.map(item => item.value));
 
-  // Geographic coordinates for cities (longitude, latitude)
-  const cityCoordinates: Record<string, [number, number]> = {
-    'New York': [-74.006, 40.7128],
-    'San Francisco': [-122.4194, 37.7749],
-    'Sydney': [151.2093, -33.8688],
-    'Singapore': [103.8198, 1.3521]
+  // Approximate positions for cities on a world map (percentage based)
+  const cityPositions: Record<string, { top: string; left: string }> = {
+    'New York': { top: '35%', left: '25%' },
+    'San Francisco': { top: '40%', left: '15%' },
+    'Sydney': { top: '75%', left: '85%' },
+    'Singapore': { top: '60%', left: '75%' }
   };
 
   return (
@@ -63,42 +84,46 @@ const WorldMap: React.FC<WorldMapProps> = ({ data }) => {
       </Typography>
       
       <MapWrapper>
-        <ComposableMap
-          projection="geoMercator"
-          projectionConfig={{
-            scale: 200,
-            center: [0, 20]
+        <MapImage 
+          src="/images/world-map.svg" 
+          alt="World Map"
+          onError={(e) => {
+            // Fallback if image doesn't load
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+          }}
+        />
+        {/* Fallback content if image fails to load */}
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1
           }}
         >
-          <Geographies geography="https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json">
-            {({ geographies }) =>
-              geographies.map((geo) => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  fill="#E5F3FF"
-                  stroke="#B3E5FC"
-                  strokeWidth={0.5}
-                />
-              ))
-            }
-          </Geographies>
-          {data.map((location) => {
-            const coordinates = cityCoordinates[location.city];
-            if (!coordinates) return null;
-            
-            return (
-              <Marker key={location.city} coordinates={coordinates}>
-                <circle
-                  r={15}
-                  fill="#1c1c1c"
-                  stroke="#ffffff"
-                  strokeWidth={2}
-                />
-              </Marker>
-            );
-          })}
-        </ComposableMap>
+          <Typography variant="body2" color="text.secondary">
+            World Map
+          </Typography>
+        </Box>
+        
+        {/* City markers */}
+        {data.map((location) => {
+          const position = cityPositions[location.city];
+          if (!position) return null;
+          
+          return (
+            <MapDot
+              key={location.city}
+              top={position.top}
+              left={position.left}
+              title={`${location.city}: ${formatNumber(location.value)}K`}
+            />
+          );
+        })}
       </MapWrapper>
       
       <Stack spacing={2}>

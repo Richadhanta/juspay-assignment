@@ -26,13 +26,71 @@ body {
   box-sizing: border-box;
 }
 
-/* Ensure proper layout for dashboard sections */
-.MuiDrawer-root {
-  position: fixed !important;
+/* Mobile-first responsive design */
+@media (max-width: 1199px) {
+  .sidebar-hidden {
+    display: none !important;
+  }
+  
+  /* Ensure mobile drawer doesn't interfere with content */
+  .MuiDrawer-modal {
+    z-index: 1300 !important;
+  }
 }
 
+@media (max-width: 1535px) {
+  .right-sidebar-hidden {
+    display: none !important;
+  }
+}
+
+/* Ensure proper flexbox behavior */
+.responsive-container {
+  display: flex;
+  flex-wrap: wrap;
+  min-height: 100vh;
+}
+
+.responsive-container > * {
+  flex-shrink: 0;
+}
+
+/* Mobile navigation improvements */
+@media (max-width: 768px) {
+  .MuiToolbar-root {
+    min-height: 56px !important;
+  }
+  
+  .MuiFab-root {
+    width: 48px !important;
+    height: 48px !important;
+  }
+}
+
+/* Smooth transitions for responsive changes */
 .MuiDrawer-paper {
+  transition: transform 0.3s ease-in-out !important;
+}
+
+/* Fix for mobile drawer overlay */
+.MuiDrawer-modal .MuiDrawer-paper {
   position: fixed !important;
+  z-index: 1300 !important;
+}
+
+/* Ensure content doesn't get hidden behind fixed elements */
+@media (max-width: 1199px) {
+  .MuiDrawer-docked {
+    display: none !important;
+  }
+}
+
+/* Better mobile responsiveness */
+@media (max-width: 600px) {
+  .MuiContainer-root {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
 }
 
 /* IMPORTANT: Do not add any CSS reset rules to this file. */

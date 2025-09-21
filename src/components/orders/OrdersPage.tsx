@@ -1,38 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import ResponsiveLayout from '../ResponsiveLayout';
 import Sidebar from '../Sidebar';
 import Header from '../Header';
+import RightSidebar from '../RightSidebar';
 import OrdersToolbar from './OrdersToolbar';
 import OrdersTable from './OrdersTable';
 import OrdersPagination from './OrdersPagination';
 import type { OrderData, OrderFilters, OrderStatus } from '../../types/orders';
-
-const MainContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  minHeight: '100vh',
-  backgroundColor: theme.palette.background.default,
-  position: 'relative'
-}));
-
-const SidebarContainer = styled(Box)({
-  position: 'fixed',
-  left: 0,
-  top: 0,
-  bottom: 0,
-  zIndex: 1200
-});
-
-const ContentArea = styled(Box)(({ theme }) => ({
-  flexGrow: 1,
-  marginLeft: '212px',
-  display: 'flex',
-  flexDirection: 'column',
-  minWidth: 0,
-  [theme.breakpoints.down('lg')]: {
-    marginLeft: 0,
-  }
-}));
+import { mockQuery } from '../../data/dashboardMockData';
 
 const HeaderContainer = styled(Box)(({ theme }) => ({
   position: 'sticky',
@@ -49,6 +26,15 @@ const MainContent = styled(Box)(({ theme }) => ({
   overflow: 'hidden',
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(2),
+  }
+}));
+
+const CenterContent = styled(Stack)(({ theme }) => ({
+  flexGrow: 1,
+  minWidth: 0,
+  overflow: 'hidden',
+  [theme.breakpoints.down('lg')]: {
+    paddingTop: 0
   }
 }));
 
@@ -79,6 +65,11 @@ const OrdersPage: React.FC<OrdersPageProps> = ({
   });
 
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
+  const [leftDrawerOpen, setLeftDrawerOpen] = useState(false);
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(false);
+
+  const handleMenuClick = () => setLeftDrawerOpen(!leftDrawerOpen);
+  const handleNotificationClick = () => setRightDrawerOpen(!rightDrawerOpen);
 
   // Filter and sort orders
   const filteredAndSortedOrders = useMemo(() => {
@@ -178,51 +169,73 @@ const OrdersPage: React.FC<OrdersPageProps> = ({
     setSelectedOrders(orderIds);
   };
 
-  return (
-    <MainContainer>
-      <SidebarContainer>
-        <Sidebar />
-      </SidebarContainer>
+  const leftContent = <Sidebar />;
+  
+  const centerContent = (
+    <CenterContent>
+      <HeaderContainer>
+        <Header onMenuClick={handleMenuClick} onNotificationClick={handleNotificationClick} />
+      </HeaderContainer>
       
-      <ContentArea>
-        <HeaderContainer>
-          <Header />
-        </HeaderContainer>
+      <MainContent>
+        <Typography variant="h6" sx={{ mb: 3, fontSize: 14, fontWeight: 600 }}>
+          Order List
+        </Typography>
         
-        <MainContent>
-          <Typography variant="h6" sx={{ mb: 3, fontSize: 14, fontWeight: 600 }}>
-            Order List
-          </Typography>
+        <Stack spacing={1.5}>
+          <OrdersToolbar
+            searchQuery={filters.search}
+            onSearchChange={handleSearchChange}
+            onAddOrder={() => console.log('Add order')}
+            onFilter={() => console.log('Filter orders')}
+            onSort={() => console.log('Sort orders')}
+          />
           
-          <Stack spacing={1.5}>
-            <OrdersToolbar
-              searchQuery={filters.search}
-              onSearchChange={handleSearchChange}
-              onAddOrder={() => console.log('Add order')}
-              onFilter={() => console.log('Filter orders')}
-              onSort={() => console.log('Sort orders')}
+          <TableContainer>
+            <OrdersTable
+              orders={paginatedOrders}
+              selectedOrders={selectedOrders}
+              onSelectionChange={handleSelectionChange}
+              onSort={handleSort}
+              sortBy={filters.sortBy}
+              sortDirection={filters.sortDirection}
             />
             
-            <TableContainer>
-              <OrdersTable
-                orders={paginatedOrders}
-                selectedOrders={selectedOrders}
-                onSelectionChange={handleSelectionChange}
-                onSort={handleSort}
-                sortBy={filters.sortBy}
-                sortDirection={filters.sortDirection}
-              />
-              
-              <OrdersPagination
-                currentPage={filters.page}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
-              />
-            </TableContainer>
-          </Stack>
-        </MainContent>
-      </ContentArea>
-    </MainContainer>
+            <OrdersPagination
+              currentPage={filters.page}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </TableContainer>
+        </Stack>
+      </MainContent>
+    </CenterContent>
+  );
+
+  // Right sidebar with notifications for orders page
+  const rightContent = (
+    <RightSidebar
+      notifications={mockQuery.notifications}
+      activities={mockQuery.activities}
+      contacts={mockQuery.contacts}
+    />
+  );
+
+  return (
+    <ResponsiveLayout
+      leftContent={leftContent}
+      centerContent={centerContent}
+      rightContent={rightContent}
+      leftDrawerOpen={leftDrawerOpen}
+      rightDrawerOpen={rightDrawerOpen}
+      onLeftDrawerToggle={handleMenuClick}
+      onRightDrawerToggle={handleNotificationClick}
+      mobileNotificationsData={{
+        notifications: mockQuery.notifications,
+        activities: mockQuery.activities,
+        contacts: mockQuery.contacts
+      }}
+    />
   );
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paper, Typography, Stack, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import ReactApexChart from 'react-apexcharts';
+import { PieChart } from '@mui/x-charts/PieChart';
 import type { SalesBreakdownData } from '../../types/dashboard';
 import { formatCurrency } from '../../utils/formatters';
 import { useTheme } from '@mui/material/styles';
@@ -31,6 +31,15 @@ const Dot = styled('span')<{ color: string }>(({ color }) => ({
   marginTop: 2
 }));
 
+const CenterLabel = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  textAlign: 'center',
+  pointerEvents: 'none'
+}));
+
 interface SalesChartProps {
   data: SalesBreakdownData[];
 }
@@ -45,11 +54,16 @@ const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
     'E-mail': theme.palette.error.main
   };
 
-  // ApexCharts expects values, not percentages, for the donut
-  const chartSeries = data.map(item => item.value);
+  // Transform data for MUI X Charts PieChart
+  const chartData = data.map((item, index) => ({
+    id: index,
+    value: item.value,
+    label: item.category,
+    color: colorMap[item.category]
+  }));
+
   const total = data.reduce((sum, item) => sum + item.value, 0);
-  const mainIdx = 0;
-  const mainPercent = total ? ((data[mainIdx].value / total) * 100).toFixed(1) : '0.0';
+  const mainPercent = total ? ((data[0].value / total) * 100).toFixed(1) : '0.0';
 
   return (
     <ChartContainer>
@@ -58,47 +72,36 @@ const SalesChart: React.FC<SalesChartProps> = ({ data }) => {
       </Typography>
       <Stack alignItems="center" sx={{ mb: 2 }}>
         <Box sx={{ width: 160, height: 160, position: 'relative' }}>
-          <ReactApexChart
-            options={{
-              chart: {
-                type: 'donut',
-                sparkline: { enabled: true },
-              },
-              labels: data.map(item => item.category),
-              colors: data.map(item => colorMap[item.category]),
-              legend: { show: false },
-              dataLabels: { enabled: false },
-              tooltip: {
-                enabled: false
-              },
-              plotOptions: {
-                pie: {
-                  donut: {
-                    size: '70%',
-                    labels: {
-                      show: true,
-                      name: { show: false },
-                      value: { show: false },
-                      total: {
-                        show: true,
-                        label: '',
-                        formatter: () => `${mainPercent}%`,
-                        fontSize: '18px',
-                        fontWeight: 600,
-                        color: theme.palette.text.primary,
-                      }
-                    }
-                  }
-                }
-              },
-              stroke: { width: 0 },
-              grid: { padding: { top: 0, bottom: 0, left: 0, right: 0 } },
-            }}
-            series={chartSeries}
-            type="donut"
+          <PieChart
+            series={[
+              {
+                data: chartData,
+                innerRadius: 56,
+                outerRadius: 80,
+                paddingAngle: 2,
+                cornerRadius: 0,
+                startAngle: 0,
+                endAngle: 360,
+                cx: 80,
+                cy: 80
+              }
+            ]}
             width={160}
             height={160}
+            margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
           />
+          <CenterLabel>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontSize: '18px', 
+                fontWeight: 600, 
+                color: 'text.primary' 
+              }}
+            >
+              {mainPercent}%
+            </Typography>
+          </CenterLabel>
         </Box>
       </Stack>
       <Stack spacing={1.2}>
